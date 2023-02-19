@@ -8,20 +8,28 @@
     <script type="module" src="./index.js"></script>
   </head>
   <body>
-  <form class="search-form" id="search-form">
-    <input
-      type="text"
-      name="searchQuery"
-      autocomplete="off"
-      placeholder="Search images..."
-    />
-    <button type="submit" class="btn-form">Search</button>
-  </form>
-
-  <div class="gallery"></div>
-
-  <button type="button" class="load-more" disabled>Load more</button>;
+  <header class="header">
+    <div class="container">
+      <form class="search-form" id="search-form">
+        <input
+          type="text"
+          name="searchQuery"
+          autocomplete="off"
+          placeholder="Search images..."
+        />
+        <button class="cearch-btn" type="submit">
+          <img src="./img/icon-loupe.png" alt="search-button" />
+        </button>
+      </form>
+    </div>
+  </header>
+  <div class="container">
+    <div class="gallery">
+      <!-- Картки зображень -->
+    </div>
+  </div>
 
   <script src="./js/main.js" type="module"></script>
+  <script src="./js/api.js" type="module"></script>
   </body>
 </html>

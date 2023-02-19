@@ -22,13 +22,18 @@ function onSubmit(e) {
   const form = e.currentTarget;
   const value = form.elements.searchQuery.value.trim();
 
-  pixabayApiService.resetPage();
-  clearNewList();
-  loadMoreBtn.show();
+  fetchData(value)
+    .then(({ hits }) => {
+      if (hits.length === 0)
+        Notiflix.Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
 
-  pixabayApiService.query = value;
-
-  fetchArticles().finally(() => form.reset());
+      return hits.reduse((markup, hit) => createMarkup(hit) + markup, '');
+    })
+    .then(updateNewsList)
+    .catch(onError)
+    .finally(() => form.reset());
 }
 
 async function fetchArticles() {
@@ -64,4 +69,74 @@ function onNothingFound(err) {
   Notiflix.Notify.failure(
     'Sorry, there are no images matching your search query. Please try again.'
   );
+}
+
+function onNoMore() {
+  loadMoreBtn.hide();
+  Notiflix.Notify.info(
+    "We're sorry, but you've reached the end of search results."
+  );
+}
+
+function onInfo(info) {
+  Notiflix.Notify.success(`Hooray! We found ${info} images.`);
+}
+
+function clearNewList(markup) {
+  gallery.innerHTML = '';
+}
+
+function appendNewToList(markup) {
+  gallery.insertAdjacentHTML('beforeend', markup);
+
+  new SimpleLightbox('.gallery a', {
+    captionsData: 'alt',
+    captionDelay: 250,
+    enableKeyboard: true,
+  }).refresh();
+}
+
+function appendNewToList(markup) {
+  gallery.insertAdjacentHTML('beforeend', markup);
+
+  new SimpleLightbox('.gallery a', {
+    captionsData: 'alt',
+    captionDelay: 250,
+    enableKeyboard: true,
+  }).refresh();
+}
+
+function createMarkup({
+                        webformatURL,
+                        largeImageURL,
+                        tags,
+                        likes,
+                        views,
+                        comments,
+                        downloads,
+                      }) {
+  return `
+  <div class="photo-card">
+    <div class="images">
+    <a href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" loading="lazy"  /></a>
+    </div>
+    <div class="info">
+    <p class="info-item">
+      <b><span class="span">Likes:</span></b>
+      <b>${likes}</b>
+    </p>
+    <p class="info-item">
+      <b><span class="span">Views:</span></b>
+      <b>${views}</b>
+    </p>
+    <p class="info-item">
+      <b><span class="span">Comments:</span></b>
+      <b>${comments}</b>
+    </p>
+    <p class="info-item">
+      <b><span class="span">Downloads:</span></b>
+      <b>${downloads}</b>
+    </p>
+  </div>
+</div>`;
 }
